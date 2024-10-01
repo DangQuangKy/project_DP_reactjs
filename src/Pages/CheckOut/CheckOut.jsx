@@ -2,13 +2,23 @@ import React, { useEffect, useState } from "react";
 import "./CheckOut.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleRight, faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Modal from "react-modal";
 import Login from "../LogIn/LogIn";
 
 Modal.setAppElement("#root");
+
 const Checkout = () => {
   const [cart, setCart] = useState([]);
+  const [formData, setFormData] = useState({
+    full_name: "",
+    email: "",
+    phone: "",
+    address: "",
+    note: ""
+  });
+  const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
   useEffect(() => {
     const storedCart = localStorage.getItem("cart");
@@ -21,6 +31,11 @@ const Checkout = () => {
       );
     }
   }, []);
+
+  useEffect(() => {
+    document.title = "Thông tin đơn hàng";
+  }, []);
+
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const openModal = () => {
     setModalIsOpen(true);
@@ -33,10 +48,45 @@ const Checkout = () => {
     return cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+    if (value) {
+      setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+    } else {
+      // Xóa giỏ hàng khỏi localStorage
+      localStorage.removeItem("cart");
+      // Cập nhật trạng thái giỏ hàng
+      setCart([]);
+      // Chuyển hướng đến trang xác nhận sản phẩm
+      navigate("/ConfirProduct", { state: { cart, formData } });
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.full_name) newErrors.full_name = "Họ và tên là bắt buộc";
+    if (!formData.email) newErrors.email = "Email là bắt buộc";
+    if (!formData.phone) newErrors.phone = "Số điện thoại là bắt buộc";
+    if (!formData.address) newErrors.address = "Địa chỉ là bắt buộc";
+    return newErrors;
+  };
+
   return (
     <>
       <nav className="nav-checkout">
-      <Link to="/">Trang chủ</Link> &nbsp; <FontAwesomeIcon icon={faAngleRight} /> <Link to="/CheckOut" className="active">Thông tin giỏ hàng</Link>
+        <Link to="/">Trang chủ</Link> &nbsp; <FontAwesomeIcon icon={faAngleRight} /> <Link to="/CheckOut" className="active">Thông tin giỏ hàng</Link>
       </nav>
       <div className="checkout-container">
         <div className="cart-list">
@@ -85,7 +135,7 @@ const Checkout = () => {
               })}
             </div>
           </div>
-          <div className="btn-buy">Thanh toán</div>
+          <button className="btn-buy" onClick={handleSubmit}>Đặt hàng</button>
           <div className="come-back">
             <Link to="/cart">
               <FontAwesomeIcon icon={faArrowLeftLong} /> &nbsp;Quay lại giỏ hàng
@@ -107,52 +157,52 @@ const Checkout = () => {
                 </Modal>
               </div>
             </div>
-            <form action="">
+            <form onSubmit={handleSubmit}>
               <div className="form-group">
-                <input type="text" name="full_name" placeholder="Họ và tên" />
-              </div>
-              <div className="form-group flex">
                 <input
-                  className="flex-2"
                   type="text"
+                  name="full_name"
+                  placeholder="Họ và tên"
+                  value={formData.full_name}
+                  onChange={handleChange}
+                />
+                {errors.full_name && <span className="error">{errors.full_name}</span>}
+              </div>
+              <div className="form-group">
+                <input
+                  type="email"
                   name="email"
                   placeholder="Email"
+                  value={formData.email}
+                  onChange={handleChange}
                 />
-                <input
-                  className="flex-1"
-                  type="text"
-                  name="phone"
-                  placeholder="Số điện thoại"
-                />
+                {errors.email && <div className="error-1">{errors.email}</div>}
               </div>
               <div className="form-group">
-                <input type="text" name="address" placeholder="Số nhà" />
+                <input
+                  type="tel"
+                  name="phone"
+                  placeholder="Số điện thoại"
+                  value={formData.phone}
+                  onChange={handleChange}
+                />
+                {errors.phone && <div className="error-1">{errors.phone}</div>}
               </div>
-              <div className="form-group flex">
+              <div className="form-group">
                 <input
-                  className="flex-2"
                   type="text"
                   name="address"
-                  placeholder="--Tỉnh thành--"
+                  placeholder="Địa chỉ nhận hàng"
+                  value={formData.address}
+                  onChange={handleChange}
                 />
-                <input
-                  className="flex-1"
-                  type="text"
-                  name="address"
-                  placeholder="--Quận huyện--"
-                />
-                <input
-                  className="flex-1"
-                  type="text"
-                  name="address"
-                  placeholder="--Phường xã--"
-                />
+                {errors.address && <span className="error">{errors.address}</span>}
+              </div>
+              <div className="inner">
+                <label>Ghi chú</label>
+                <textarea name="note" rows={2} cols={10} value={formData.note} onChange={handleChange}></textarea>
               </div>
             </form>
-            <div className="inner">
-              <label>Ghi chú</label>
-              <textarea name="note" rows={2} cols={10}></textarea>
-            </div>
           </div>
         </div>
       </div>

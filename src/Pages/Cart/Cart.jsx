@@ -16,7 +16,9 @@ const Cart = () => {
       })));
     }
   }, []);
-
+ useEffect(() => {
+  document.title = "Thông tin giỏ hàng"
+ },[])
   const handleQuantityChange = (id, newQuantity) => {
     setCart((prevCart) => {
       const updatedCart = prevCart.map((item) => {

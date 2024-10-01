@@ -9,6 +9,9 @@ function TinTuc() {
                .then(response => response.json())
                .then((data) => setNews(data))
     },[]);
+    useEffect(() => {
+      document.title = "Trang tin tức"
+    },[])
     return ( 
         <div className="tin-tuc">
            <nav className="nav-tin-tuc">

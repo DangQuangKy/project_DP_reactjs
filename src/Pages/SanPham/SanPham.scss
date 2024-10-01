@@ -56,22 +56,21 @@
     transform: rotate(180deg);
 }
 .list {
-    list-style-type: none;
     border: 1px solid #000;
     position: absolute;
     top: 35px;
-    right: 0;
+    right: -20px;
     background-color: #f2f2f2;
-}
-.list li {
-    width: 180px;
-    display: inline-block;
-    :hover {
-        color: red;
-    }
-    a {
-        font-size: 12px;
-        text-align: center;
+    z-index: 100;
+    list-style: none;
+    li {
+        width: 180px;
+        &:hover {
+            color: red;
+        }
+        p{
+            margin-left: 10px;
+        }
     }
 }
 
@@ -107,7 +106,7 @@
         margin-top: 30px;
 
         ul {
-            display: flex;
+            display: inline-flex;
             flex-wrap: wrap;
             gap: 10px;
             list-style: none;
@@ -116,6 +115,7 @@
 
             li {
                 flex: 1 1 calc(33.333% - 10px);
+                max-width: calc(33.333% - 10px);
                 box-sizing: border-box;
                 background-color: #fff;
                 padding: 10px;
@@ -134,9 +134,8 @@
                 .btn{
                     line-height: 35px;
                     text-align: center;
-                    width: 150px;
+                    width: 120px;
                     height: 35px;
-                    background-color: #2196F3;
                     text-transform: uppercase;
                     color: #080408;
                     cursor: pointer;
@@ -149,4 +148,16 @@
 .main-right li:hover img {
     transform: scale(1.05); 
     cursor: pointer;
+  }
+  .btn-next{
+    display: flex;
+    justify-content: space-evenly;
+    .btn1{
+        background-color: chocolate;
+        border-radius: 5px;
+    }
+    .btn2{
+        background-color: cornflowerblue;
+        border-radius: 5px;
+    }
   }

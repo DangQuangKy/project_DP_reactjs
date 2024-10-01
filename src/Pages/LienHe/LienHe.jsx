@@ -6,7 +6,7 @@ import {
   faEnvelope,
   faHeadphones,
 } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";;
+import { useEffect, useState } from "react";;
 function LienHe() {
   const [formData, setFormData] = useState({
     name: "",
@@ -14,6 +14,10 @@ function LienHe() {
     title: "",
     content: "",
   });
+
+  useEffect(() => {
+    document.title = "Trang liên hệ"
+  },[])
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({

@@ -10,17 +10,21 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import "./ProductDetail.scss";
 import Rating from "../../Components/Rating/Rating";
-import { addProduct } from "../../Redux/slice/cartSlice"
+import { addProduct } from "../../Redux/slice/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
+import Notification from "../../Components/Notification/Notification";
 function ProductDetail() {
   const { id } = useParams();
   const [product, setProduct] = useState([]);
+  const [count, setCount] = useState(1);
+  const [showNotification, setShowNotification] = useState(false); // Trạng thái thông báo
+  const [notificationMessage, setNotificationMessage] = useState(""); // Nội dung thông báo
   const dispatch = useDispatch();
-  const CartProducts = useSelector(state => state.cart.CartArr)
- 
+  const CartProducts = useSelector((state) => state.cart.CartArr);
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -33,8 +37,10 @@ function ProductDetail() {
     }
     fetchData();
   }, [id]);
-  const [count, setCount] = useState(1);
 
+  useEffect(() => {
+    document.title = "Trang Sản phẩm"
+  },[])
   const increment = () => {
     setCount(count + 1);
   };
@@ -44,6 +50,12 @@ function ProductDetail() {
     }
   };
   const [ratings, setRatings] = useState([0, 0, 0, 90, 100]);
+  // hành động thêm giỏ hàng sẽ hiện ra thông báo
+  const handleAddToCart = (product) => {
+    dispatch(addProduct(product));
+    setNotificationMessage(`Đã thêm ${product.name} vào giỏ hàng!`);
+    setShowNotification(true);
+  };
 
   return (
     <div>
@@ -55,14 +67,14 @@ function ProductDetail() {
         return (
           <>
             <nav className="nav-product">
-              <a href="/">Trang chủ</a> &nbsp;&nbsp;&nbsp;
+              <Link href="/">Trang chủ</Link> &nbsp;&nbsp;&nbsp;
               <FontAwesomeIcon icon={faAngleRight} />
-              <a href="/SanPham">Sản phẩm</a>
+              <Link href="/SanPham">Sản phẩm</Link>
               &nbsp;&nbsp;&nbsp;
               <FontAwesomeIcon icon={faAngleRight} />
-              <a href={`/SanPham/${product.id}`} className="active">
+              <Link href={`/SanPham/${product.id}`} className="active">
                 {product.name}
-              </a>
+              </Link>
             </nav>
             <div className="productdetail">
               <div className="pro-img">
@@ -98,7 +110,14 @@ function ProductDetail() {
                     </span>
                   </div>
                   <div className="btn-buy">
-                    <a onClick={() => dispatch(addProduct(product))}>Thêm giỏ hàng</a>
+                    <Link onClick={() => handleAddToCart(product)}>
+                      Thêm giỏ hàng
+                    </Link>
+                    <Notification
+                      message={notificationMessage}
+                      show={showNotification}
+                      onClose={() => setShowNotification(false)}
+                    />
                   </div>
                 </div>
                 <div className="list-suite">
@@ -147,17 +166,15 @@ function ProductDetail() {
                   <h3>Khách hàng đánh giá</h3>
                   <div className="rating-points">5.0</div>
                   <div className="rating-star">
-                  <FontAwesomeIcon icon={faStar} />
-                  <FontAwesomeIcon icon={faStar} />
-                  <FontAwesomeIcon icon={faStar} />
-                  <FontAwesomeIcon icon={faStar} />
-                  <FontAwesomeIcon icon={faStar} />
+                    <FontAwesomeIcon icon={faStar} />
+                    <FontAwesomeIcon icon={faStar} />
+                    <FontAwesomeIcon icon={faStar} />
+                    <FontAwesomeIcon icon={faStar} />
+                    <FontAwesomeIcon icon={faStar} />
                   </div>
                 </div>
-                <div className="rating-2">
-                  <Rating ratings={ratings} />
-                  </div>
-                  </div>
+                
+              </div>
             </div>
           </>
         );

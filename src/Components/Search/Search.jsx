@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Search.scss';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 
 function Search() {
     const [data, setData] = useState([]);
@@ -13,6 +15,14 @@ function Search() {
         })
         .catch(err => console.log(err));
     }, []);
+    const debounce = (func, delay) => {
+        let debounceTimer;
+        return function(...args) {
+            const context = this;
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => func.apply(context, args), delay);
+        };
+    };
 
     const handleFilter = (value) => {
         const response = filterData.filter(f => f.name.toLowerCase().includes(value.toLowerCase()));
@@ -21,6 +31,8 @@ function Search() {
             setData([]);
         }
     };
+    // set time tìm kiếm 
+    const debouncedHandleFilter = debounce(handleFilter, 500);
 
     const handleProductClick = (id) => {
         window.location.href = `/SanPham/${id}`;
@@ -29,11 +41,14 @@ function Search() {
     return (
         <div className='search-top'>
             <div className='search'>
+                <div className='search-input-icon'>
+                <FontAwesomeIcon icon={faMagnifyingGlass} />
+                </div>
                 <input
                     type="text"
                     className="search-input"
                     placeholder="Tìm sản phẩm..."
-                    onChange={e => handleFilter(e.target.value)}
+                    onChange={e => debouncedHandleFilter(e.target.value)}
                 />
             </div>
             <div className='search-result'>

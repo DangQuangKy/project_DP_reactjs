@@ -88,6 +88,7 @@
         text-align: center;
         margin-top: 30px;
         margin-left: 40px;
+        font-size: 18px;
         &:hover{
             color: #111c2d;
             background-color: #f2f2f2;
@@ -125,18 +126,11 @@
     }
     form{
         margin: 20px;
-        .flex{
-            display: flex;
-            gap: 10px;
-            .flex-1{
-                flex: 1;
-            }
-            .flex-2{
-                flex: 2;
-            }
-        }
         .form-group{
             margin-bottom: 20px;
+            .flex-2{
+                margin-bottom: 30px;
+            }
         }
         .form-group input {
             width: 100%;
@@ -174,3 +168,13 @@
         margin-bottom: 10px;
     }
 }
+.error {
+    color: red;
+    font-size: 12px;
+    margin-top: 2px;
+  }
+  .error-1{
+    color: red;
+    font-size: 12px;
+    margin-top: 2px;
+  }
